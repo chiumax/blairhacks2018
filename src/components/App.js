@@ -75,7 +75,9 @@ class App extends Component {
     logo: { display: "default" },
     warnDisplay: false,
     password: "",
-    username: ""
+    username: "",
+    wrongLog:false,
+    table: null
   };
   myRef = React.createRef();
   checkRegex = event => {
@@ -118,10 +120,11 @@ class App extends Component {
     		'Accept': 'application/json',
     	'Content-Type': 'application/json',
   		},
-  		body:JSON.stringify({search:this.state.tag})
-	}).then(response => JSON.stringify(response)).then(data=> console.log(data));
-                	console.log(window.location.href);
-                  this.setState({ load: fadeOutUpr }, () => {
+  		body:JSON.stringify({query:this.state.tag})
+	}).then(response => response.text()).then(data => {
+		this.setState({table:data})
+	}).then(()=> {
+		this.setState({ load: fadeOutUpr }, () => {
                     setTimeout(() => {
 
                       this.setState({ load: defaultM }, () => {
@@ -140,6 +143,9 @@ class App extends Component {
                     }, 1000);
                   });
                 }, 3000);
+	})
+        
+                  
               });
             }, 1000);
           });
@@ -182,7 +188,6 @@ handleLog = (button) => {
 }
 handleLogin = (event) => {
 	event.preventDefault();
-	this.setState({stage: "logged"})
 	fetch("http://127.0.0.1:5000/"+this.state.post, {
   		method: 'POST',
   		headers: {
@@ -190,7 +195,12 @@ handleLogin = (event) => {
     	'Content-Type': 'application/json',
   		},
   		body:JSON.stringify({uname:this.state.username,pw:this.state.password})
-	}).then(response => JSON.stringify(response)).then(data=> console.log(data));
+	}).then(response => response.text()).then(data=> {console.log(data);
+		if(!(data == "")){
+		this.setState({stage: "logged", wrongLog: false})
+	}else{
+		this.setState({wrongLog:true})
+	}})
 }
 handleUserChange = (event) => {
 	this.setState({username: event.target.value})
@@ -250,9 +260,9 @@ switchStatement = () => {
                   
                   /></div>
                 <div>
-                  <label className={"WarnText"} style={this.state.warn}>
-                    Not Valid
-                  </label>
+                  {this.state.wrongLog && <label className={"WarnText"} >
+                    Incorrect Password/Username
+                  </label>}
                 </div>
                 <div style={this.state.input}>
                   <input type="submit" value="Submit" className="HomeButton" />
@@ -276,6 +286,9 @@ switchStatement = () => {
               >
                 Showing stock results for {this.state.tag}
               </label>
+</div>
+<div style={this.state.status}>
+<div dangerouslySetInnerHTML={{__html: this.state.table}} />
 </div>
       <img src={stockGIF} alt={"loading"} className={"HomeGif"} style={this.state.input}/ >
         <div className="title title-2" style={this.state.input}>Welcome to Stock Prophet</div>

@@ -3,7 +3,8 @@ from flask import request
 from passlib.hash import pbkdf2_sha512
 from pymongo import MongoClient
 from flask_cors import CORS, cross_origin
-
+import requests
+import uuid
 
 
 
@@ -29,24 +30,23 @@ def register():
         user_info.insert_one(entry)
         return 'success'
 
-@app.route('/login')
+@app.route('/login', methods=['POST'])
 def login():
-    if requests.method=='POST':
+    if request.method=='POST':
         j=request.get_json(force=True)
         print(j)
         uname=j['uname']
         pw=j['pw']
         user = user_info.find_one({"uname": uname})
         if user:
-            if pbkdf2_sha512.verify(pw,user["hash"]):
+            if pbkdf2_sha512.verify(pw,user["hashed_pw"]):
                 response="success"
-                user_id=uuid.uuid4().hex()
+                user_id=uuid.uuid4().hex
                 current_users.insert_one({"id":user_id,"uname":uname})
-                response.set_cookie("SessionID", userid)
-                return response
-    return "fail"
+                return user_id
+    return ""
 
-@app.route('/buy')
+@app.route('/buy', methods=['POST'])
 def buy():
     if request.method=='POST':
         j=request.get_json(force=True)
@@ -66,7 +66,7 @@ def buy():
         user["money"]=current_money-buy_order
         return 'success'
 
-@app.route("/sell")
+@app.route("/sell", methods=['POST'])
 def sell():
     if request.method=='POST':
         j=request.get_json(force=True)
@@ -81,21 +81,21 @@ def sell():
             return 'success'
         return 'fail'
 
-@app.route("/getMoney")
+@app.route("/getMoney", methods=['POST'])
 def getMoney():
     if request.method=='POST':
         user_id=request.cookies.get("SessionID")
         user=current_users.find_one({"id":user_id})
         return user["money"]
 
-@app.route("/getStocks")
+@app.route("/getStocks", methods=['POST'])
 def getStocks():
     if request.method=='POST':
         user_id=request.cookies.get("SessionID")
         user=current_users.find_one({"id":user_id})
         return user["stocks"]
 
-@app.route("/search")
+@app.route("/search", methods=['POST'])
 def stock_search():
     if request.method=='POST':
         j=request.get_json(force=True)
@@ -127,4 +127,5 @@ def stock_search():
             l2.append("a href="+a)
         s=''.join(l2)
         s="<td><"+s[:s.rindex('</td>')]+"</td>"
+        print(s)
         return s
