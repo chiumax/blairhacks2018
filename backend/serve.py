@@ -116,6 +116,7 @@ def stock_search():
         l=interesting_stuff.split("a href=")
         l2=[]
         names=[]
+        d=dict()
         for i in range(0,len(l),2):
             start=l[i].find('">')
             end=l[i].find("</a>",start)
@@ -124,12 +125,9 @@ def stock_search():
             end=l[i].find('">')
             end2=l[i].find("</a>",end)
             l[i]=l[i].replace("  ","")
-            a=our_base+l[i][end-(end2-end-2):end+2]+names[i//2+1]+l[i][end2:]
-            l2.append("a href="+a)
-        s=''.join(l2)
-        s="<td><"+s[:s.rindex('</td>')]+"</td>"
-        print(s)
-        return s
+            a=l[i][end-(end2-end-2):end+2]
+            d[names[i//2+1]]=a
+        return d
 @app.route('/stock/<stock_name>/<interval>')
 def prices(stock_name, interval):
     return stocksoneel.getStockHistory(stock_name,interval)
