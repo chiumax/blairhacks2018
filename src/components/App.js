@@ -87,7 +87,6 @@ class App extends Component {
     );
     let str = this.state.tag.replace(/\s/g, "");
     regexCheck = !str || regexCheck;
-    console.log(!str || regexCheck);
     this.setState({ symbol: regexCheck });
     if (regexCheck) {
       this.setState({ headShake: {}, warn: { display: "none" } }, () => {
@@ -121,7 +120,7 @@ class App extends Component {
     	'Content-Type': 'application/json',
   		},
   		body:JSON.stringify({query:this.state.tag})
-	}).then(response => response.text()).then(data => {
+	}).then(response => response.text()).then(data => {console.log(data);
 		this.setState({table:data})
 	}).then(()=> {
 		this.setState({ load: fadeOutUpr }, () => {
@@ -195,7 +194,7 @@ handleLogin = (event) => {
     	'Content-Type': 'application/json',
   		},
   		body:JSON.stringify({uname:this.state.username,pw:this.state.password})
-	}).then(response => response.text()).then(data=> {console.log(data);
+	}).then(response => response.text()).then(data=> {
 		if(!(data == "")){
 		this.setState({stage: "logged", wrongLog: false})
 	}else{
@@ -207,6 +206,9 @@ handleUserChange = (event) => {
 }
 handlePassChange = (event) => {
 	this.setState({password: event.target.value})
+}
+showCompany = () => {
+	console.log("yeet")
 }
 switchStatement = () => {
 	switch(this.state.stage) {
@@ -287,8 +289,8 @@ switchStatement = () => {
                 Showing stock results for {this.state.tag}
               </label>
 </div>
-<div style={this.state.status}>
-<div dangerouslySetInnerHTML={{__html: this.state.table}} />
+<div style={this.state.status} >
+{this.showCompany()}
 </div>
       <img src={stockGIF} alt={"loading"} className={"HomeGif"} style={this.state.input}/ >
         <div className="title title-2" style={this.state.input}>Welcome to Stock Prophet</div>

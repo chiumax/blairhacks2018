@@ -119,3 +119,17 @@ width: 80%;
 .title-2{
   font-size: 6.5rem;
 }
+
+.tableData div{
+  display: flex;
+  flex-direction: column;
+  font-size: 3rem;
+
+  
+}
+.tableData div a{
+   background-image: linear-gradient(to bottom, red 0%, blue 100%);  /* the gradient */
+  background-origin: border-box;  /* set background to start from border-box */
+  border-spacing: 5px;  /* space between each cell */
+  border: 1px solid transparent;  /* optional */
+}
