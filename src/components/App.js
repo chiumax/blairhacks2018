@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
 import logo from '../images/logo.svg';
 import stockGIF from "../images/stocc.gif"
+import stockIMG from "../images/stock.png"
 import magnify from "../images/mag.svg"
+import user from "../images/user.svg"
+import lock from "../images/lock.svg"
 import Radium, { StyleRoot } from "radium";
 import {
   headShake,
@@ -58,8 +61,11 @@ const defaultD = {
 class App extends Component {
 
 	state = {
-		val: "yote",
+
+		stage: 'login',
     symbol: null,
+    register: undefined,
+    post: undefined,
     tag: "",
     headShake: {headShaker},
     input: {},
@@ -67,7 +73,9 @@ class App extends Component {
     warn: { display: "none" },
     status: { display: "none" },
     logo: { display: "default" },
-    warnDisplay: false
+    warnDisplay: false,
+    password: "",
+    username: ""
   };
   myRef = React.createRef();
   checkRegex = event => {
@@ -131,15 +139,6 @@ class App extends Component {
     }
   };
   handleChange = event => {
-  	fetch("http://127.0.0.1:5000/register", {
-  		method: 'POST',
-  		headers: {
-    		'Accept': 'application/json',
-    	'Content-Type': 'application/json',
-  		},
-  		body:JSON.stringify({uname:"retard",pw:"re"})
-	}).then(response => JSON.stringify(response)).then(data=> console.log(data));
-
     if (this.state.warnDisplay) {
       this.setState({ warn: fadeOutUpr, warnDisplay: false }, () => {
         setTimeout(() => {
@@ -167,10 +166,93 @@ class App extends Component {
     window.scrollTo({ behavior: "smooth" });
     window.scrollTo(0, this.myRef.current.offsetTop);
 };
-  render() {
-    return (
-    	<StyleRoot>
-      <div className="App">
+handleLog = (button) => {
+	let str = button.replace(/\s/g, "").toLowerCase();
+	this.setState({register:button, stage:"loginForm",post: str}) 
+
+}
+handleLogin = (event) => {
+	event.preventDefault();
+	this.setState({stage: "logged"})
+	fetch("http://127.0.0.1:5000/"+this.state.post, {
+  		method: 'POST',
+  		headers: {
+    		'Accept': 'application/json',
+    	'Content-Type': 'application/json',
+  		},
+  		body:JSON.stringify({uname:this.state.username,pw:this.state.password})
+	}).then(response => JSON.stringify(response)).then(data=> console.log(data));
+}
+handleUserChange = (event) => {
+	this.setState({username: event.target.value})
+}
+handlePassChange = (event) => {
+	this.setState({password: event.target.value})
+}
+switchStatement = () => {
+	switch(this.state.stage) {
+  		case 'login':
+  		return(<div><div className="title" >Stock Prophet</div>
+  			<div className={"logHome"}>
+  			 <img src={stockGIF} alt={"loading"} className={"HomeGif"} style={this.state.input}/ >
+  			<button
+              className={"HomeButton ReturnButt LoginButt"}
+              onClick={() => {this.handleLog("Register")}}
+
+            >
+              Register
+            </button>
+            <button
+              className={"HomeButton ReturnButt LoginButt"}
+              
+              onClick={() => {this.handleLog("Log in")}}
+            >
+              Login
+            </button>
+            </div>
+  			</div>);
+  		case 'loginForm':
+  		return(<div><div className="title">{this.state.register}</div>
+  			<form onSubmit={this.handleLogin} className="HomeForm">
+              <div className={"FormFlex"}>
+                <div style={this.state.input}>
+                  <img src={user} alt="" className={"SearchIco"} />
+                  <input
+
+					onChange={this.handleUserChange}
+                    value={this.state.username}
+                    type="text"
+                    name="user"
+                    placeholder="username"
+                    className={"HomeInput"}
+                  
+                  />
+                  
+                </div>
+                <div><img src={lock} alt="" className={"SearchIco"} />
+                  <input
+                  	style={this.state.headShake}
+					onChange={this.handlePassChange}
+                    value={this.state.password}
+                    type="password"
+                    name=" pass"
+                    placeholder="password"
+                    className={"HomeInput"}
+                  
+                  /></div>
+                <div>
+                  <label className={"WarnText"} style={this.state.warn}>
+                    Not Valid
+                  </label>
+                </div>
+                <div style={this.state.input}>
+                  <input type="submit" value="Submit" className="HomeButton" />
+                </div>
+              </div>
+</form></div>);
+  		case 'logged':
+  		return(	
+      <div>
        <button
               className={"HomeButton ReturnButt"}
               style={this.state.status}
@@ -187,7 +269,7 @@ class App extends Component {
               </label>
 </div>
       <img src={stockGIF} alt={"loading"} className={"HomeGif"} style={this.state.input}/ >
-        <div className="title" style={this.state.input}>Stock Prophet</div>
+        <div className="title title-2" style={this.state.input}>Welcome to Stock Prophet</div>
 
 
  <form onSubmit={this.checkRegex} className="HomeForm">
@@ -221,10 +303,22 @@ class App extends Component {
                 </div>
               </div>
 </form>
-      </div>
-      </StyleRoot>
-    );
-  }
+</div>
+      );
+  		default:
+  		return null;
+  	}
+
 }
+  render() {
+  	return(
+  		<StyleRoot>
+      <div className="App">
+      {this.switchStatement()}
+  		</div>
+      </StyleRoot>
+)
+  
+}}
 
 export default App;
