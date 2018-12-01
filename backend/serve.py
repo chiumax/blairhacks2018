@@ -31,8 +31,8 @@ def register():
 
 @app.route('/login', methods=['POST'])
 def login():
-    if requests.method=='POST':
-        j=request.json()
+    if request.method=='POST':
+        j=request.get_json()
         print(j)
         uname=request.args.get('uname')
         pw=request.args.get('pw')
