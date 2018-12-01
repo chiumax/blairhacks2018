@@ -29,13 +29,13 @@ def register():
         user_info.insert_one(entry)
         return 'success'
 
-@app.route('/login', methods=['POST'])
+@app.route('/login')
 def login():
-    if request.method=='POST':
-        j=request.get_json()
+    if requests.method=='POST':
+        j=request.get_json(force=True)
         print(j)
-        uname=request.args.get('uname')
-        pw=request.args.get('pw')
+        uname=j['uname']
+        pw=j['pw']
         user = user_info.find_one({"uname": uname})
         if user:
             if pbkdf2_sha512.verify(pw,user["hash"]):
@@ -46,16 +46,17 @@ def login():
                 return response
     return "fail"
 
-@app.route('/buy', methods=['POST'])
+@app.route('/buy')
 def buy():
     if request.method=='POST':
+        j=request.get_json(force=True)
         user_id=request.cookies.get("SessionID")
         user=current_users.find_one({"id":user_id})
-        buy_order=request.args.get('money')
+        buy_order=j['money']
         current_money=user["money"]
         if current_money<buy_order:
             return 'not enough money'
-        stock_name=request.args.get("StockName")
+        stock_name=j["StockName"]
         stock_price = 1000 #TODO: Stock Price Function
         num_stocks=current_money/stock_price
         if not user["stocks"][stock_name]:
@@ -65,14 +66,15 @@ def buy():
         user["money"]=current_money-buy_order
         return 'success'
 
-@app.route("/sell", methods=['POST'])
+@app.route("/sell")
 def sell():
     if request.method=='POST':
+        j=request.get_json(force=True)
         user_id=request.cookies.get("SessionID")
         user=current_users.find_one({"id":user_id})
-        sell_order=request.args.get('num_stocks')
+        sell_order=j['num_stocks']
         current_money=user["money"]
-        stock_name=request.args.get("StockName")
+        stock_name=j["StockName"]
         stock_price = 1000 #TODO: Stock Price Function
         if user["stocks"][stock_name]>=sell_order:
             user["money"]=current_money+sell_order*stock_price
@@ -85,10 +87,44 @@ def getMoney():
         user_id=request.cookies.get("SessionID")
         user=current_users.find_one({"id":user_id})
         return user["money"]
-        
+
 @app.route("/getStocks")
 def getStocks():
     if request.method=='POST':
         user_id=request.cookies.get("SessionID")
         user=current_users.find_one({"id":user_id})
         return user["stocks"]
+
+@app.route("/search")
+def stock_search():
+    if request.method=='POST':
+        j=request.get_json(force=True)
+        query=j['query']
+        our_base="localhost:3000/stock/"
+        base="https://www.nasdaq.com/symbol/?Load=true&Search="
+        r=requests.get(base+query)
+        out=r.text
+        first='<div id="SymbolLookupContainer" class="genTable">'
+        start="</tr>"
+        end='</div><!--end genTable-->'
+        f_ind=out.find(first)
+        st_ind = out.find(start, f_ind)
+        end_ind = out.find(end,st_ind)
+        interesting_stuff = out[st_ind+20:end_ind-150]
+
+        l=interesting_stuff.split("a href=")
+        l2=[]
+        names=[]
+        for i in range(0,len(l),2):
+            start=l[i].find('">')
+            end=l[i].find("</a>",start)
+            names.append(l[i][start+2:end])
+        for i in range(1, len(l), 2):
+            end=l[i].find('">')
+            end2=l[i].find("</a>",end)
+            l[i]=l[i].replace("  ","")
+            a=our_base+l[i][end-(end2-end-2):end+2]+names[i//2+1]+l[i][end2:]
+            l2.append("a href="+a)
+        s=''.join(l2)
+        s="<td><"+s[:s.rindex('</td>')]+"</td>"
+        return s
