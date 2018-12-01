@@ -1,30 +1,44 @@
-from flask import Flask, request
-from passlib.hash import pkbdf2_sha512
+from flask import Flask
+from flask import request
+from passlib.hash import pbkdf2_sha512
 from pymongo import MongoClient
+from flask_cors import CORS, cross_origin
+
+
+
 
 c = MongoClient('localhost',27017)
 db = c.test
-user_info = c.user_info
-current_users = c.loggedin_users
+user_info = db.user_info
+current_users = db.loggedin_users
 
-app = Flask.app(__name__)
-
-@app.route('/register')
+app = Flask(__name__)
+CORS(app)
+@app.route("/")
+def hello():
+    return "Hello, World!"
+@app.route('/register', methods=['POST'])
 def register():
     if request.method=='POST':
-        uname=request.args.get('uname')
-        pw=request.args.get('pw')
-        hash=pkbdf2_sha512.hash(pw)
-        entry={"uname":uname, "hashed_pw":hash, "money": 10000, "stocks":{}}
+        j=request.get_json(force=True)
+        uname=j['uname']
+        pw=j['pw']
+        print(uname, pw)
+        h=pbkdf2_sha512.hash(pw.encode())
+        entry={"uname":uname, "hashed_pw":h, "money": 10000, "stocks":{}}
+        user_info.insert_one(entry)
+        return 'success'
 
 @app.route('/login')
 def login():
     if requests.method=='POST':
+        j=request.json()
+        print(j)
         uname=request.args.get('uname')
         pw=request.args.get('pw')
         user = user_info.find_one({"uname": uname})
         if user:
-            if pkbdf2_sha512.verify(pw,user["hash"]):
+            if pbkdf2_sha512.verify(pw,user["hash"]):
                 response="success"
                 user_id=uuid.uuid4().hex()
                 current_users.insert_one({"id":user_id,"uname":uname})

@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "history": "^4.7.2",
     "node-sass": "^4.10.0",
     "normalize.css": "^8.0.1",
     "radium": "^0.25.0",

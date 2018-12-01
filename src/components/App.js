@@ -12,6 +12,9 @@ import {
   fadeIn
 } from "react-animations";
 
+
+
+
 const headShaker = {
   animation: "x 1s",
   animationName: Radium.keyframes(headShake, "headShake")
@@ -100,8 +103,10 @@ class App extends Component {
             setTimeout(() => {
               this.setState({ load: fadeInUpr, defaultS }, () => {
                 setTimeout(() => {
+                	console.log(window.location.href);
                   this.setState({ load: fadeOutUpr }, () => {
                     setTimeout(() => {
+
                       this.setState({ load: defaultM }, () => {
                         setTimeout(() => {
                           this.setState({ logo: fadeOutUpr }, () => {
@@ -126,6 +131,15 @@ class App extends Component {
     }
   };
   handleChange = event => {
+  	fetch("http://127.0.0.1:5000/register", {
+  		method: 'POST',
+  		headers: {
+    		'Accept': 'application/json',
+    	'Content-Type': 'application/json',
+  		},
+  		body:JSON.stringify({uname:"retard",pw:"re"})
+	}).then(response => JSON.stringify(response)).then(data=> console.log(data));
+
     if (this.state.warnDisplay) {
       this.setState({ warn: fadeOutUpr, warnDisplay: false }, () => {
         setTimeout(() => {
