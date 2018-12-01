@@ -5,6 +5,7 @@ from pymongo import MongoClient
 from flask_cors import CORS, cross_origin
 import requests
 import uuid
+import stocksoneel
 
 
 
@@ -50,14 +51,14 @@ def login():
 def buy():
     if request.method=='POST':
         j=request.get_json(force=True)
-        user_id=request.cookies.get("SessionID")
+        user_id=j["SessionID"]
         user=current_users.find_one({"id":user_id})
         buy_order=j['money']
         current_money=user["money"]
         if current_money<buy_order:
             return 'not enough money'
         stock_name=j["StockName"]
-        stock_price = 1000 #TODO: Stock Price Function
+        stock_price = stocksoneel.getStock(stock_name)
         num_stocks=current_money/stock_price
         if not user["stocks"][stock_name]:
             user["stocks"][stock_name]=num_stocks
@@ -70,12 +71,12 @@ def buy():
 def sell():
     if request.method=='POST':
         j=request.get_json(force=True)
-        user_id=request.cookies.get("SessionID")
+        user_id=j["SessionID"]
         user=current_users.find_one({"id":user_id})
         sell_order=j['num_stocks']
         current_money=user["money"]
         stock_name=j["StockName"]
-        stock_price = 1000 #TODO: Stock Price Function
+        stock_price = stocksoneel.getStock(stock_name)
         if user["stocks"][stock_name]>=sell_order:
             user["money"]=current_money+sell_order*stock_price
             return 'success'
@@ -84,14 +85,14 @@ def sell():
 @app.route("/getMoney", methods=['POST'])
 def getMoney():
     if request.method=='POST':
-        user_id=request.cookies.get("SessionID")
+        user_id=j["SessionID"]
         user=current_users.find_one({"id":user_id})
         return user["money"]
 
 @app.route("/getStocks", methods=['POST'])
 def getStocks():
     if request.method=='POST':
-        user_id=request.cookies.get("SessionID")
+        user_id=j["SessionID"]
         user=current_users.find_one({"id":user_id})
         return user["stocks"]
 
@@ -129,3 +130,6 @@ def stock_search():
         s="<td><"+s[:s.rindex('</td>')]+"</td>"
         print(s)
         return s
+@app.route('/stock/<stock_name>/<interval>')
+def prices(stock_name, interval):
+    return stocksoneel.getStockHistory(stock_name,interval)
