@@ -32,10 +32,10 @@ def register():
 @app.route('/login')
 def login():
     if requests.method=='POST':
-        j=request.json()
+        j=request.get_json(force=True)
         print(j)
-        uname=request.args.get('uname')
-        pw=request.args.get('pw')
+        uname=j['uname']
+        pw=j['pw']
         user = user_info.find_one({"uname": uname})
         if user:
             if pbkdf2_sha512.verify(pw,user["hash"]):
@@ -49,13 +49,14 @@ def login():
 @app.route('/buy')
 def buy():
     if request.method=='POST':
+        j=request.get_json(force=True)
         user_id=request.cookies.get("SessionID")
         user=current_users.find_one({"id":user_id})
-        buy_order=request.args.get('money')
+        buy_order=j['money']
         current_money=user["money"]
         if current_money<buy_order:
             return 'not enough money'
-        stock_name=request.args.get("StockName")
+        stock_name=j["StockName"]
         stock_price = 1000 #TODO: Stock Price Function
         num_stocks=current_money/stock_price
         if not user["stocks"][stock_name]:
@@ -68,11 +69,12 @@ def buy():
 @app.route("/sell")
 def sell():
     if request.method=='POST':
+        j=request.get_json(force=True)
         user_id=request.cookies.get("SessionID")
         user=current_users.find_one({"id":user_id})
-        sell_order=request.args.get('num_stocks')
+        sell_order=j['num_stocks']
         current_money=user["money"]
-        stock_name=request.args.get("StockName")
+        stock_name=j["StockName"]
         stock_price = 1000 #TODO: Stock Price Function
         if user["stocks"][stock_name]>=sell_order:
             user["money"]=current_money+sell_order*stock_price
@@ -85,7 +87,7 @@ def getMoney():
         user_id=request.cookies.get("SessionID")
         user=current_users.find_one({"id":user_id})
         return user["money"]
-        
+
 @app.route("/getStocks")
 def getStocks():
     if request.method=='POST':
