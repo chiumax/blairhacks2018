@@ -1,0 +1,114 @@
+.App {
+  text-align: center;
+}
+.title {
+margin-top: 3rem;
+  font-size: 10rem;
+  color: lighten($back,78%);
+}
+
+.HomeInput {
+    padding:5px 0 15px 25px; 
+    border:2px solid #ccc;
+    margin-top: 3rem;
+    width: 50vw; 
+    font-size: 5rem;
+    color: lighten($back,78%);
+    background: transparent;
+    border-radius: 40px;
+}
+.HomeButton {
+
+  font-size: 14px;
+  text-decoration: none;
+  text-transform: uppercase;
+  background: transparent;
+  display: inline-block;
+  padding: 15px 30px;
+  border-radius: 40px;
+  color: white;
+  font-weight: 700;
+  outline: 0 !important;
+  margin-top: 2rem;
+  cursor: pointer;
+}
+.SearchIco{
+  position: relative;
+  bottom: -1rem;
+  padding-right: 2rem;
+  height: 5rem;
+  width: 5rem;
+}
+.HomeGif{
+height: 100%;
+width: 80%;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0vw;
+  margin: 0 auto;
+  z-index: -1;
+  -webkit-filter: blur(4px);
+  -moz-filter: blur(4px);
+  -o-filter: blur(4px);
+  -ms-filter: blur(4px);
+  filter: blur(4px);
+  }
+  
+
+.HomeBack {
+  background: darken(grey,30%);
+  align-content: center;
+}
+.HeaderTitle {
+  padding-top: 15vh;
+  color: white;
+   font-size: $l-size;
+   margin: 0;
+}
+.HeaderHead{
+  margin: 0;
+}
+.LogoImg{
+  height: $xl-size;
+  width: $xl-size;
+  padding-top: 1.5rem;
+}
+
+.FlexRow {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-content: center;
+}
+.HomeForm {
+  margin-top:10vh;
+  overflow: none;
+  position:relative;
+  z-index: 99;
+  text-align: center;
+}
+
+.HomeText {
+  vertical-align: bottom;
+  font-size: $xl-size;
+  color: white;
+  font-weight: bold;
+  margin-right: 5px;
+}
+.WarnText {
+  margin:0;
+  font-size: $s-size;
+  color: red;
+  font-weight:bold;
+}
+.FormFlex {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-content: center;
+}
+.ReturnButt {
+  margin-left:2rem;
+  cursor: pointer;
+}
