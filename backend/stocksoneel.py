@@ -52,7 +52,6 @@ def getCrypto(symbol,itrval):
     return avg
 
 
-print(getCrypto('BTC','day'))
+#print(getCrypto('BTC','day'))
 #print(getStock('GOOGL',1))
-#print(daily_price_historical("BTC","USD").to_string())
-#print(hourly_price_historical("BTC","USD").to_string())
+
