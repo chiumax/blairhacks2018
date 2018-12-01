@@ -5,6 +5,7 @@ from pymongo import MongoClient
 from flask_cors import CORS, cross_origin
 import requests
 import uuid
+import stocksoneel
 
 
 
@@ -50,14 +51,14 @@ def login():
 def buy():
     if request.method=='POST':
         j=request.get_json(force=True)
-        user_id=request.cookies.get("SessionID")
+        user_id=j["SessionID"]
         user=current_users.find_one({"id":user_id})
         buy_order=j['money']
         current_money=user["money"]
         if current_money<buy_order:
             return 'not enough money'
         stock_name=j["StockName"]
-        stock_price = 1000 #TODO: Stock Price Function
+        stock_price = stocksoneel.getStock(stock_name)
         num_stocks=current_money/stock_price
         if not user["stocks"][stock_name]:
             user["stocks"][stock_name]=num_stocks
@@ -70,12 +71,12 @@ def buy():
 def sell():
     if request.method=='POST':
         j=request.get_json(force=True)
-        user_id=request.cookies.get("SessionID")
+        user_id=j["SessionID"]
         user=current_users.find_one({"id":user_id})
         sell_order=j['num_stocks']
         current_money=user["money"]
         stock_name=j["StockName"]
-        stock_price = 1000 #TODO: Stock Price Function
+        stock_price = stocksoneel.getStock(stock_name)
         if user["stocks"][stock_name]>=sell_order:
             user["money"]=current_money+sell_order*stock_price
             return 'success'
@@ -84,14 +85,14 @@ def sell():
 @app.route("/getMoney", methods=['POST'])
 def getMoney():
     if request.method=='POST':
-        user_id=request.cookies.get("SessionID")
+        user_id=j["SessionID"]
         user=current_users.find_one({"id":user_id})
         return user["money"]
 
 @app.route("/getStocks", methods=['POST'])
 def getStocks():
     if request.method=='POST':
-        user_id=request.cookies.get("SessionID")
+        user_id=j["SessionID"]
         user=current_users.find_one({"id":user_id})
         return user["stocks"]
 
@@ -115,6 +116,7 @@ def stock_search():
         l=interesting_stuff.split("a href=")
         l2=[]
         names=[]
+        d=dict()
         for i in range(0,len(l),2):
             start=l[i].find('">')
             end=l[i].find("</a>",start)
@@ -123,9 +125,9 @@ def stock_search():
             end=l[i].find('">')
             end2=l[i].find("</a>",end)
             l[i]=l[i].replace("  ","")
-            a=our_base+l[i][end-(end2-end-2):end+2]+names[i//2+1]+l[i][end2:]
-            l2.append("a href="+a)
-        s=''.join(l2)
-        s="<td><"+s[:s.rindex('</td>')]+"</td>"
-        print(s)
-        return s
+            a=l[i][end-(end2-end-2):end+2]
+            d[names[i//2+1]]=a
+        return d
+@app.route('/stock/<stock_name>/<interval>')
+def prices(stock_name, interval):
+    return stocksoneel.getStockHistory(stock_name,interval)
