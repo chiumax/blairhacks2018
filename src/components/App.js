@@ -107,10 +107,19 @@ class App extends Component {
       }
       this.setState({ input: fadeOutUpr, tag: str }, () => {
         setTimeout(() => {
+
           this.setState({ input: defaultM }, () => {
             setTimeout(() => {
               this.setState({ load: fadeInUpr, defaultS }, () => {
                 setTimeout(() => {
+                	fetch("http://127.0.0.1:5000/search", {
+  		method: 'POST',
+  		headers: {
+    		'Accept': 'application/json',
+    	'Content-Type': 'application/json',
+  		},
+  		body:JSON.stringify({search:this.state.tag})
+	}).then(response => JSON.stringify(response)).then(data=> console.log(data));
                 	console.log(window.location.href);
                   this.setState({ load: fadeOutUpr }, () => {
                     setTimeout(() => {
