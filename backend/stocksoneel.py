@@ -42,13 +42,13 @@ def getCrypto(name):
     '''
     Returns the current number value of cryptocurrency given
     '''
-    return cryptocompare.get_price(symbol,curr='USD')['ETH']['USD']
+    return cryptocompare.get_price(name,curr='USD')[name]['USD']
 
 def getCryptoHistory(name,itrval):
     '''
     returns a dictionary of most recent 100 values for the given cryptocurrency(abbrieviated) and interval with the date
     this takes the average of the high and low values
-    intervals options are: 'minute','hour','day'
+    intervals options are: 'minute','hour','day','week','month'
     '''
     if itrval=='week':
         cc = CryptoCurrencies(key='C5VMXSQYDFRMISJ2', output_format='pandas')
@@ -66,13 +66,11 @@ def getCryptoHistory(name,itrval):
         return vals
     else:
         url = ('https://min-api.cryptocompare.com/data/histo'+itrval+'?fsym={}&tsym={}&limit={}&aggregate={}').format(name.upper(),'USD', 100,1)
-        print(url)
         page = requests.get(url)
         data = page.json()['Data']
         df = pd.DataFrame(data)
         df['timestamp'] = [datetime.datetime.fromtimestamp(d) for d in df.time]
         vals={}
-        print(len(list(df.index)))
         for i in range(len(df['high'])):
-            vals[df['timestamp'][i]]=(df['high'][i]+df['low'][i])/2
+            vals[str(df['timestamp'][i])]=(df['high'][i]+df['low'][i])/2
         return vals
