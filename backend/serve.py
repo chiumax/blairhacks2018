@@ -125,9 +125,9 @@ def stock_search():
             end=l[i].find('">')
             end2=l[i].find("</a>",end)
             l[i]=l[i].replace("  ","")
-            a=l[i][end-(end2-end-2):end+2]
+            a=l[i][end-(end2-end-2):end]
             d[names[i//2+1]]=a
-        return d
+        return str(d).replace("'",'"')
 @app.route('/stock/<stock_name>/<interval>')
 def prices(stock_name, interval):
     return stocksoneel.getStockHistory(stock_name,interval)

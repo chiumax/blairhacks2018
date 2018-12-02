@@ -120,16 +120,49 @@ width: 80%;
   font-size: 6.5rem;
 }
 
+
+.tableData{
+   
+  margin: 0 auto;
+}
+.tableData div div{
+  color: white;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  font-size: 3rem;  
+}
 .tableData div{
   display: flex;
-  flex-direction: column;
-  font-size: 3rem;
-
-  
+  direction: row;
+  justify-content:center;
 }
-.tableData div a{
-   background-image: linear-gradient(to bottom, red 0%, blue 100%);  /* the gradient */
-  background-origin: border-box;  /* set background to start from border-box */
-  border-spacing: 5px;  /* space between each cell */
-  border: 1px solid transparent;  /* optional */
+.rectangle{
+  height:0.5rem;
+  width: 75%;
+  margin: 3rem auto;
+  background: white;
+}
+.Icon{
+  height: 2rem;
+  fill:white;
+  margin:auto 0;
+  width: 2rem;
+  transition: transform 2s easy-ease;
+}
+.tableData:hover Icon{
+  transform: translateX(10px);
+}
+.tableData {
+  margin:20px;
+  padding: 3px;
+
+  float:none;
+  -webkit-transition: margin 0.5s ease-out;
+    -moz-transition: margin 0.5s ease-out;
+    -o-transition: margin 0.5s ease-out;
+}
+
+.tableData:hover {
+  cursor:pointer;
+    margin-top: 5px;
 }

@@ -77,7 +77,8 @@ class App extends Component {
     password: "",
     username: "",
     wrongLog:false,
-    table: null
+    table: null,
+    doneAnima:false
   };
   myRef = React.createRef();
   checkRegex = event => {
@@ -112,7 +113,7 @@ class App extends Component {
           this.setState({ input: defaultM }, () => {
             setTimeout(() => {
               this.setState({ load: fadeInUpr, defaultS }, () => {
-                setTimeout(() => {
+                setTimeout(() => { 
                 	fetch("http://127.0.0.1:5000/search", {
   		method: 'POST',
   		headers: {
@@ -120,7 +121,7 @@ class App extends Component {
     	'Content-Type': 'application/json',
   		},
   		body:JSON.stringify({query:this.state.tag})
-	}).then(response => response.text()).then(data => {console.log(data);
+	}).then(response => response.text()).then(data => { 
 		this.setState({table:data})
 	}).then(()=> {
 		this.setState({ load: fadeOutUpr }, () => {
@@ -133,7 +134,8 @@ class App extends Component {
                               this.setState({
                                 status: fadeInUpr,
                                 defaultS,
-                                logo: defaultM
+                                logo: defaultM,
+                                doneAnima: true
                               });
                             }, 1000);
                           });
@@ -167,11 +169,12 @@ class App extends Component {
     this.setState({ status: fadeOutUpr }, () => {
       setTimeout(() => {
         this.setState({
+        	table: null,
           status: defaultM,
           logo: fadeInUpr,
           defaultS,
           input: fadeInUpr,
-          defaultS
+          doneAnima: false
         });
       }, 1000);
     });
@@ -207,9 +210,24 @@ handleUserChange = (event) => {
 handlePassChange = (event) => {
 	this.setState({password: event.target.value})
 }
+
 showCompany = () => {
-	console.log("yeet")
-}
+	let rend = [];
+	let htm;
+	console.log(this.state.table)
+	if (!(this.state.table==null)){
+		let data = JSON.parse(this.state.table)
+		Object.keys(data).forEach((key)=> { 
+		rend.push(<div className={"tableData"} key={key}><svg viewBox="0 0 20 20" class="Icon">
+          <path d="M0 0 L10 10 L0 20"></path>
+        </svg><div >{key}</div><div>{data[key]}</div></div>) });
+			console.log(this.state.table);
+		return rend;
+	}
+}	
+
+	
+
 switchStatement = () => {
 	switch(this.state.stage) {
   		case 'login':
@@ -290,7 +308,8 @@ switchStatement = () => {
               </label>
 </div>
 <div style={this.state.status} >
-{this.showCompany()}
+<div class="rectangle"></div>
+{!!this.state.doneAnima && <div >{this.showCompany()}</div>}
 </div>
       <img src={stockGIF} alt={"loading"} className={"HomeGif"} style={this.state.input}/ >
         <div className="title title-2" style={this.state.input}>Welcome to Stock Prophet</div>
