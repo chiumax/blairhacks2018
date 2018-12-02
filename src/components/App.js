@@ -5,6 +5,10 @@ import stockIMG from "../images/stock.png"
 import magnify from "../images/mag.svg"
 import user from "../images/user.svg"
 import lock from "../images/lock.svg"
+import ReactChartkick, { LineChart } from 'react-chartkick'
+import Chart from 'chart.js'
+
+
 import Radium, { StyleRoot } from "radium";
 import {
   headShake,
@@ -17,7 +21,7 @@ import {
 
 
 
-
+ReactChartkick.addAdapter(Chart)
 const headShaker = {
   animation: "x 1s",
   animationName: Radium.keyframes(headShake, "headShake")
@@ -78,7 +82,10 @@ class App extends Component {
     username: "",
     wrongLog:false,
     table: null,
-    doneAnima:false
+    doneAnima:false,
+    data: null,
+    showTable: false,
+    interval: "minute"
   };
   myRef = React.createRef();
   checkRegex = event => {
@@ -121,7 +128,7 @@ class App extends Component {
     	'Content-Type': 'application/json',
   		},
   		body:JSON.stringify({query:this.state.tag})
-	}).then(response => response.text()).then(data => { 
+	}).then(response => response.text()).then(data => { console.log(data)
 		this.setState({table:data})
 	}).then(()=> {
 		this.setState({ load: fadeOutUpr }, () => {
@@ -174,7 +181,8 @@ class App extends Component {
           logo: fadeInUpr,
           defaultS,
           input: fadeInUpr,
-          doneAnima: false
+          doneAnima: false,
+          showTable:false
         });
       }, 1000);
     });
@@ -218,16 +226,24 @@ showCompany = () => {
 	if (!(this.state.table==null)){
 		let data = JSON.parse(this.state.table)
 		Object.keys(data).forEach((key)=> { 
-		rend.push(<div className={"tableData"} key={key}><svg viewBox="0 0 20 20" class="Icon">
+		rend.push(<div className={"tableData"} key={key} onClick={() => {this.showStock(data[key].toUpperCase())}}><svg viewBox="0 0 20 20" className="Icon">
           <path d="M0 0 L10 10 L0 20"></path>
         </svg><div >{key}</div><div>{data[key]}</div></div>) });
 			console.log(this.state.table);
 		return rend;
 	}
+
 }	
-
+showStock = (key) => {
+	console.log(key)
+	fetch("http://127.0.0.1:5000/stock/"+key+"/"+this.state.interval).then(response => response.text()).then(data => {console.log(data);this.setState({
+		data: data, showTable: true
+	})})
+}
 	
-
+changeInt = (event) => {
+	this.setState({interval:event.target.value})
+}
 switchStatement = () => {
 	switch(this.state.stage) {
   		case 'login':
@@ -308,8 +324,9 @@ switchStatement = () => {
               </label>
 </div>
 <div style={this.state.status} >
-<div class="rectangle"></div>
-{!!this.state.doneAnima && <div >{this.showCompany()}</div>}
+<div className="rectangle"></div>
+{!!this.state.doneAnima && <div className={"tableWrap"}>{this.showCompany()}</div>}
+{!!this.state.showTable && <LineChart data={JSON.parse(this.state.data)} />}
 </div>
       <img src={stockGIF} alt={"loading"} className={"HomeGif"} style={this.state.input}/ >
         <div className="title title-2" style={this.state.input}>Welcome to Stock Prophet</div>
@@ -336,6 +353,14 @@ switchStatement = () => {
                   
                   />
                 </div>
+                <div style={this.state.input}>
+                <div className={"stockInt"}>Stock Interval</div>
+                 <select name="interval" onChange={this.changeInt} value={this.state.interval} className={"select"}>
+  <option value="minute">minute</option>
+  <option value="day">day</option>
+  <option value="week">week</option>
+  <option value="month">month</option>
+</select> </div>
                 <div>
                   <label className={"WarnText"} style={this.state.warn}>
                     Not Valid

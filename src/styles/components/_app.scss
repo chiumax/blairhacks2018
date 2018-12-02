@@ -125,16 +125,19 @@ width: 80%;
    
   margin: 0 auto;
 }
-.tableData div div{
+.tableData div{
   color: white;
   padding-left: 1rem;
   padding-right: 1rem;
   font-size: 3rem;  
 }
-.tableData div{
+.tableData {
   display: flex;
   direction: row;
   justify-content:center;
+}
+.tableData:hover{
+  cursor: pointer;
 }
 .rectangle{
   height:0.5rem;
@@ -152,17 +155,15 @@ width: 80%;
 .tableData:hover Icon{
   transform: translateX(10px);
 }
-.tableData {
-  margin:20px;
-  padding: 3px;
 
-  float:none;
-  -webkit-transition: margin 0.5s ease-out;
-    -moz-transition: margin 0.5s ease-out;
-    -o-transition: margin 0.5s ease-out;
+.stockInt{
+  color: white;
+  font-size: 3rem;
+  margin-top: 3rem;
 }
-
-.tableData:hover {
-  cursor:pointer;
-    margin-top: 5px;
+.select{
+  font-size: 3rem;
+  background: transparent;
+  border-radius: 10px;
+  color: white;
 }

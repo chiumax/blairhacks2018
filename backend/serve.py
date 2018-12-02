@@ -130,8 +130,9 @@ def stock_search():
         return str(d).replace("'",'"')
 @app.route('/stock/<stock_name>/<interval>')
 def stock_prices(stock_name, interval):
-    return stocksoneel.getStockHistory(stock_name,interval)
+    print(str(stocksoneel.getStockHistory(stock_name,interval)).replace("'",'"'))
+    return str(stocksoneel.getStockHistory(stock_name,interval)).replace("'",'"')
 
 @app.route('/crypto/<coin_name>/<interval>')
 def coin_prices(coin_name, interval):
-    return stocksoneel.getCryptoHistory(coin_name,interval)
+    return str(stocksoneel.getCryptoHistory(coin_name,interval)).replace("'",'"')
