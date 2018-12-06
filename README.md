@@ -1,6 +1,9 @@
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 # Stock Prophet
+
+We participated in a 12 hour long hackathon and this is what were able to make.
+TODO: add gifs
 *The following copied from our [devpost submisstion](https://devpost.com/software/the-stock-prophet)* 
 
 ## Inspiration
