@@ -16,7 +16,7 @@ Our website software allows users to create their own accounts to simulate buyin
 We used Python Flask to program the backend and React for the frontend. We also used MongoDB as the database.
 
 ## Challenges we ran into
-We ran into several challenges along the way. First, we had trouble finding a working API because both googlefinance and yahoofinance were not functional. After some additional research, we ended up using alpha_vantage (for stocks) and cryptocompare (for cryptocurrency). Also, the graphing functionality was not working, which was due to the data formatting and we managed to fix the problem.
+We ran into several challenges along the way. First, we had trouble finding a working API because both googlefinance and yahoofinance were not functional. After some additional research, we ended up using alpha_vantage (for stocks) and cryptocompare (for cryptocurrency).
 
 ## Accomplishments that we're proud of
 We are proud that we were able to successfully get the data from the API's and correctly format it. Also, we were able to make the backend completely functional.
