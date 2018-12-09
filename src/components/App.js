@@ -226,7 +226,7 @@ showCompany = () => {
 	if (!(this.state.table==null)){
 		let data = JSON.parse(this.state.table)
 		Object.keys(data).forEach((key)=> { 
-		rend.push(<div className={"tableData"} key={key} onClick={() => {this.showStock(data[key].toUpperCase())}}><svg viewBox="0 0 20 20" className="Icon">
+		rend.push(<div className={"tableData"} key={key} onClick={() => {this.showStock(data[key].toUpperCase()); this.setState({showTable:true, data: null})}}><svg viewBox="0 0 20 20" className="Icon">
           <path d="M0 0 L10 10 L0 20"></path>
         </svg><div >{key}</div><div>{data[key]}</div></div>) });
 			console.log(this.state.table);
@@ -235,10 +235,18 @@ showCompany = () => {
 
 }	
 showStock = (key) => {
-	console.log(key)
-	fetch("http://127.0.0.1:5000/stock/"+key+"/"+this.state.interval).then(response => response.text()).then(data => {console.log(data);this.setState({
+	fetch("http://127.0.0.1:5000/stock/"+key+"/"+this.state.interval).then(response => response.text())
+	.then(data => {
+		console.log('during fetch')
+		console.log(data);
+		if(!(data[0]=="{")){
+			this.showStock(key);
+		}else{console.log(data);
+		this.setState({
 		data: data, showTable: true
-	})})
+	})}
+		})
+		console.log('after fetch');
 }
 	
 changeInt = (event) => {
