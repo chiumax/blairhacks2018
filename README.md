@@ -3,7 +3,12 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 # Stock Prophet
 
 We participated in a 12 hour long hackathon and this is what were able to make.
-TODO: add gifs
+
+# Screenshots
+
+![screenshot](https://github.com/dumblole/blairhacks2018/blob/master/images/gallery%20(4).jpg)
+![screenshot](https://github.com/dumblole/blairhacks2018/blob/master/images/gallery%20(5).jpg)
+
 *The following copied from our [devpost submisstion](https://devpost.com/software/the-stock-prophet)* 
 
 ## Inspiration
